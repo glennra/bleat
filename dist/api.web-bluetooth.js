@@ -292,8 +292,7 @@
                 .then(function(services) {
                     if (services.length !== 1) return reject("getPrimaryService error: service not found");
                     resolve(services[0]);
-                })
-                .catch(function(error) {
+                }, function(error) {
                     reject(error);
                 });
         }.bind(this));
@@ -343,8 +342,7 @@
                 .then(function(characteristics) {
                     if (characteristics.length !== 1) return reject("getCharacteristic error: characteristic not found");
                     resolve(characteristics[0]);
-                })
-                .catch(function(error) {
+                }, function(error) {
                     reject(error);
                 });
         }.bind(this));
@@ -380,8 +378,7 @@
                 .then(function(services) {
                     if (services.length !== 1) return reject("getIncludedService error: service not found");
                     resolve(services[0]);
-                })
-                .catch(function(error) {
+                }, function(error) {
                     reject(error);
                 });
         }.bind(this));
@@ -447,8 +444,7 @@
                 .then(function(descriptors) {
                     if (descriptors.length !== 1) return reject("getDescriptor error: descriptor not found");
                     resolve(descriptors[0]);
-                })
-                .catch(function(error) {
+                }, function(error) {
                     reject(error);
                 });
         }.bind(this));
