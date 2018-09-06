@@ -26,7 +26,7 @@
  */
 
 // https://github.com/umdjs/umd
-(function (root, factory) {
+(function(root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         if (root.navigator.bluetooth) {
@@ -41,7 +41,11 @@
     } else {
         // Browser globals with support for web workers (root is window)
         // Assume Promise exists or has been poly-filled
-        root.bleat = root.navigator.bluetooth || factory(root.Promise, root.Map, root.bleatHelpers);
+        if (cordovaApp) {
+            root.bleat = factory(root.Promise, root.Map, root.bleatHelpers);
+        } else {
+            root.bleat = root.navigator.bluetooth || factory(root.Promise, root.Map, root.bleatHelpers);
+        }
     }
 }(this, function(Promise, Map, helpers) {
     "use strict";
@@ -65,8 +69,7 @@
                         Object.keys(extension[key]).forEach(function(mapKey) {
                             base[key].set(mapKey, extension[key][mapKey]);
                         });
-                    }
-                    else base[key] = extension[key];
+                    } else base[key] = extension[key];
                 }
             });
         }
@@ -80,6 +83,7 @@
             this.__events[type].push(callback);
         };
     }
+
     function removeEventListener(type, callback, capture) {
         if (!this.__events || !this.__events[type]) return; //error
         var i = this.__events[type].indexOf(callback);
@@ -87,6 +91,7 @@
         if (this.__events[type].length === 0) delete this.__events[type];
         if (Object.keys(this.__events).length === 0) delete this.__events;
     }
+
     function dispatchEvent(event) {
         if (!this.__events || !this.__events[event.type]) return; //error
         event.target = this;
@@ -127,6 +132,7 @@
     }
 
     var scanner = null;
+
     function requestDevice(options) {
         return new Promise(function(resolve, reject) {
             if (scanner !== null) return reject("requestDevice error: request in progress");
@@ -171,9 +177,9 @@
 
                 function complete(bluetoothDevice) {
                     cancelRequest()
-                    .then(function() {
-                        resolve(bluetoothDevice);
-                    });
+                        .then(function() {
+                            resolve(bluetoothDevice);
+                        });
                 }
 
                 function selectFn() {
@@ -207,13 +213,14 @@
             }, function() {
                 scanner = setTimeout(function() {
                     cancelRequest()
-                    .then(function() {
-                        if (!found) reject("requestDevice error: no devices found");
-                    });
+                        .then(function() {
+                            if (!found) reject("requestDevice error: no devices found");
+                        });
                 }, options.scanTime || defaultScanTime);
             }, wrapReject(reject, "requestDevice error"));
         });
     }
+
     function cancelRequest() {
         return new Promise(function(resolve, reject) {
             if (scanner) {
@@ -230,7 +237,7 @@
         this._handle = null;
         this._allowedServices = [];
 
-        this.id = "unknown"; 
+        this.id = "unknown";
         this.name = null;
         this.adData = {
             appearance: null,
@@ -282,13 +289,13 @@
             if (!serviceUUID) return reject("getPrimaryService error: no service specified");
 
             this.getPrimaryServices(serviceUUID)
-            .then(function(services) {
-                if (services.length !== 1) return reject("getPrimaryService error: service not found");
-                resolve(services[0]);
-            })
-            .catch(function(error) {
-                reject(error);
-            });
+                .then(function(services) {
+                    if (services.length !== 1) return reject("getPrimaryService error: service not found");
+                    resolve(services[0]);
+                })
+                .catch(function(error) {
+                    reject(error);
+                });
         }.bind(this));
     };
     BluetoothRemoteGATTServer.prototype.getPrimaryServices = function(serviceUUID) {
@@ -333,13 +340,13 @@
             if (!characteristicUUID) return reject("getCharacteristic error: no characteristic specified");
 
             this.getCharacteristics(characteristicUUID)
-            .then(function(characteristics) {
-                if (characteristics.length !== 1) return reject("getCharacteristic error: characteristic not found");
-                resolve(characteristics[0]);
-            })
-            .catch(function(error) {
-                reject(error);
-            });
+                .then(function(characteristics) {
+                    if (characteristics.length !== 1) return reject("getCharacteristic error: characteristic not found");
+                    resolve(characteristics[0]);
+                })
+                .catch(function(error) {
+                    reject(error);
+                });
         }.bind(this));
     };
     BluetoothRemoteGATTService.prototype.getCharacteristics = function(characteristicUUID) {
@@ -370,13 +377,13 @@
             if (!serviceUUID) return reject("getIncludedService error: no service specified");
 
             this.getIncludedServices(serviceUUID)
-            .then(function(services) {
-                if (services.length !== 1) return reject("getIncludedService error: service not found");
-                resolve(services[0]);
-            })
-            .catch(function(error) {
-                reject(error);
-            });
+                .then(function(services) {
+                    if (services.length !== 1) return reject("getIncludedService error: service not found");
+                    resolve(services[0]);
+                })
+                .catch(function(error) {
+                    reject(error);
+                });
         }.bind(this));
     };
     BluetoothRemoteGATTService.prototype.getIncludedServices = function(serviceUUID) {
@@ -437,13 +444,13 @@
             if (!descriptorUUID) return reject("getDescriptor error: no descriptor specified");
 
             this.getDescriptors(descriptorUUID)
-            .then(function(descriptors) {
-                if (descriptors.length !== 1) return reject("getDescriptor error: descriptor not found");
-                resolve(descriptors[0]);
-            })
-            .catch(function(error) {
-                reject(error);
-            });
+                .then(function(descriptors) {
+                    if (descriptors.length !== 1) return reject("getDescriptor error: descriptor not found");
+                    resolve(descriptors[0]);
+                })
+                .catch(function(error) {
+                    reject(error);
+                });
         }.bind(this));
     };
     BluetoothRemoteGATTCharacteristic.prototype.getDescriptors = function(descriptorUUID) {
