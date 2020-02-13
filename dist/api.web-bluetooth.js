@@ -41,7 +41,7 @@
     } else {
         // Browser globals with support for web workers (root is window)
         // Assume Promise exists or has been poly-filled
-        if (typeof cordovaApp !== 'undefined') {
+        if (typeof cordovaApp !== 'undefined' && cordovaApp.device !== 'browser') {
             root.bleat = factory(root.Promise, root.Map, root.bleatHelpers);
         } else {
             root.bleat = root.navigator.bluetooth || factory(root.Promise, root.Map, root.bleatHelpers);
